@@ -33,6 +33,9 @@ RUN mkdir -p /app/.cache/huggingface /app/.cache/datasets && chown -R app:app /a
 
 USER app
 
+# Railway injects PORT; fall back to 8000 for local docker runs.
+ENV PORT=8000
 EXPOSE 8000
 
-CMD ["gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", "--workers", "2", "--bind", "0.0.0.0:8000", "app.main:asgi_app"]
+# Shell form so $PORT is expanded at runtime.
+CMD gunicorn --worker-class uvicorn.workers.UvicornWorker --workers 2 --bind 0.0.0.0:${PORT} app.main:asgi_app
