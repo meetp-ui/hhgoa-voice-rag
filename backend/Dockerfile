@@ -13,6 +13,7 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-install-project --no-dev
 
 COPY app ./app
+COPY scripts ./scripts
 RUN uv sync --frozen --no-dev
 
 # runtime 
@@ -23,6 +24,7 @@ RUN groupadd --system app && useradd --system --gid app --create-home app
 COPY --from=builder /usr/local /usr/local
 WORKDIR /app
 COPY app ./app
+COPY scripts ./scripts
 
 ENV HF_HOME=/app/.cache/huggingface
 RUN mkdir -p /app/.cache/huggingface /app/.cache/datasets && chown -R app:app /app
