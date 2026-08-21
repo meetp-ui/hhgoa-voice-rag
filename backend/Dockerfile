@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 # builder
 FROM python:3.11-slim AS builder
 
@@ -12,12 +10,10 @@ ENV UV_COMPILE_BYTECODE=1 \
 WORKDIR /app
 
 COPY pyproject.toml uv.lock ./
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-install-project --no-dev
+RUN uv sync --frozen --no-install-project --no-dev
 
 COPY app ./app
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
+RUN uv sync --frozen --no-dev
 
 # runtime 
 FROM python:3.11-slim AS runtime

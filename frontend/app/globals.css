@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+:root {
+  /* Cream / paper tones */
+  --cream:        #EEE9D1;
+  --cream-raised: #F5F1E3;
+  --cream-sunken: #E4DFCA;
+  --cream-border: #D0C8A8;
+
+  /* Forest-green palette */
+  --forest:       #1C3A20;
+  --forest-mid:   #2E6B38;
+  --sage:         #4A7A52;
+  --sage-dim:     #C8DCC8;
+
+  /* Warm dark text */
+  --bark:         #1A1A0E;
+  --stone:        #4A4A3A;
+  --pebble:       #7A7868;
+  --dust:         #A8A090;
+
+  /* Sun yellow (auto-detect, mic active) */
+  --sun:          #D4CA00;
+  --sun-bright:   #EDE200;
+  --sun-dim:      #F5F0B0;
+
+  /* Semantic */
+  --error:        #8B2E1E;
+  --error-bg:     #F5E8E5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--forest);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Slider thumb — pseudo-elements cannot be expressed as inline styles */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--forest);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: var(--forest-mid);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--forest);
+  cursor: pointer;
+  border: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; }
+}

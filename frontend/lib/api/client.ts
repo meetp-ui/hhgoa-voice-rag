@@ -73,3 +73,26 @@ export async function queryAudio(
 
   return (await response.json()) as QueryResponse;
 }
+
+export async function queryText(
+  text: string,
+  languageHint?: string,
+  useReranker = false,
+): Promise<QueryResponse> {
+  const response = await fetch(`${API_BASE_URL}/query`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      text,
+      language_hint: languageHint || undefined,
+      use_reranker: useReranker,
+    }),
+  });
+
+  if (response.status === 400) {
+    const body = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(body?.error ?? `Request rejected with status 400`);
+  }
+
+  return (await response.json()) as QueryResponse;
+}
