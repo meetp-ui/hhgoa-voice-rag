@@ -1,0 +1,99 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env
+    environment:
+      QDRANT_URL: http://qdrant:6333
+      EMBEDDING_SERVICE_URL: http://embedding:80
+      RERANKER_SERVICE_URL: http://reranker:80
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/app:/app/app
+      - dataset_cache:/app/.cache/datasets
+    command:
+      [
+        "gunicorn",
+        "--worker-class", "uvicorn.workers.UvicornWorker",
+        "--workers", "2",
+        "--bind", "0.0.0.0:8000",
+        "--reload",
+        "app.main:asgi_app",
+      ]
+    depends_on:
+      qdrant:
+        condition: service_healthy
+      embedding:
+        condition: service_healthy
+    networks:
+      - rag
+
+  qdrant:
+    image: qdrant/qdrant:v1.10.1
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/6333' || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    networks:
+      - rag
+
+  embedding:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.9.3
+    command:
+      [
+        "--model-id", "BAAI/bge-m3",
+        "--pooling", "cls",
+        "--max-batch-tokens", "4096",
+        "--max-client-batch-size", "8",
+        "--max-concurrent-requests", "32",
+      ]
+    volumes:
+      - embedding_cache:/data
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/80' || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 80
+      start_period: 300s
+    networks:
+      - rag
+
+  reranker:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.9.3
+    profiles: ["rerank"]
+    command:
+      [
+        "--model-id", "onnx-community/bge-reranker-v2-m3-ONNX",
+        "--max-batch-tokens", "4096",
+        "--max-client-batch-size", "8",
+        "--max-concurrent-requests", "32",
+      ]
+    volumes:
+      - reranker_cache:/data
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/80' || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 80
+      start_period: 300s
+    networks:
+      - rag
+
+networks:
+  rag:
+    driver: bridge
+
+volumes:
+  qdrant_data:
+  embedding_cache:
+  reranker_cache:
+  dataset_cache:
