@@ -451,6 +451,29 @@ export default function Home() {
               </motion.button>
             </form>
 
+            <div className="mb-8">
+              <p className="text-[10px] tracking-[0.18em] uppercase text-[#7A7868] font-semibold mb-3">
+                In this corpus · 5,000 topics from MS Marco
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {SAMPLE_QUESTIONS.map((q) => (
+                  <button
+                    key={q.text}
+                    onClick={() => handleSampleClick(q.text)}
+                    className="rounded-full border border-[#D0C8A8] bg-[#F5F1E3] px-3 py-1.5 text-xs text-[#4A4A3A] hover:border-[#1C3A20] hover:text-[#1C3A20] transition-colors"
+                  >
+                    <span className="text-[#7A7868]">{q.lang}</span>
+                    <span className="text-[#C0B898] mx-1">·</span>
+                    {q.text.length > 40 ? q.text.slice(0, 40) + "…" : q.text}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-3 text-[11px] text-[#7A7868] leading-relaxed">
+                Ask something outside those 5,000 topics — "what is a country" — and it will
+                decline rather than guess. That is the intended behaviour.
+              </p>
+            </div>
+
             <div className="flex items-center gap-3 mb-5 sm:mb-6">
               <span className="text-xs text-[#7A7868]">Accuracy mode (reranker)</span>
               <button
@@ -459,12 +482,12 @@ export default function Home() {
                 aria-checked={useReranker}
                 onClick={() => setUseReranker((v) => !v)}
                 disabled={phase === "recording" || phase === "submitting"}
-                className="relative h-5 w-9 rounded-full transition-colors disabled:opacity-40 rotate-180 disabled:cursor-not-allowed"
+                className="relative h-5 w-9 rounded-full transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{ background: useReranker ? "#1C3A20" : "#D0C8A8" }}
               >
                 <span
                   className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${
-                    useReranker ? "-translate-x-4" : "translate-x-0.5"
+                    useReranker ? "translate-x-4" : "translate-x-0.5"
                   }`}
                 />
               </button>
@@ -599,6 +622,51 @@ export default function Home() {
           </div>
 
           <div className="lg:w-72 flex-shrink-0 flex flex-col gap-4">
+            <div className="rounded-xl border border-[#D0C8A8] bg-[#F5F1E3] px-6 py-6">
+              <p className="text-[10px] tracking-[0.2em] uppercase font-semibold text-[#7A7868] mb-4">
+                Stage 1 · Clocked
+              </p>
+
+              <TimerDisplay ms={stage1Ms} budget={200} />
+
+              <p className="mt-2 text-[11px] text-[#A8A090]">budget 200 ms</p>
+
+              {result && stage1Ms > 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-5 space-y-1.5"
+                >
+                  {[
+                    { label: "Retrieve",   ms: stage1Ms   },
+                    ...(transcribeMs !== null ? [{ label: "Transcribe", ms: transcribeMs }] : []),
+                    ...(generateMs   !== null ? [{ label: "Generate",   ms: generateMs   }] : []),
+                  ].map((row) => (
+                    <div key={row.label} className="flex items-center gap-2 text-[11px]">
+                      <span className="w-20 sm:w-[5.5rem] text-[#7A7868] flex-shrink-0">
+                        {row.label}
+                      </span>
+                      <div className="flex-1 h-1 bg-[#D0C8A8] rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.min((row.ms / (totalMs || 1)) * 100, 100)}%` }}
+                          transition={{ duration: 0.5, ease: "easeOut" }}
+                          className="h-full bg-[#1C3A20] rounded-full"
+                        />
+                      </div>
+                      <span className="w-14 text-right tabular-nums text-[#4A4A3A] font-medium">
+                        {row.ms.toFixed(1)} ms
+                      </span>
+                    </div>
+                  ))}
+                </motion.div>
+              ) : (
+                <p className="mt-6 text-[11px] text-[#A8A090] leading-relaxed">
+                  Ask something to see the breakdown
+                </p>
+              )}
+            </div>
 
             <div className="rounded-xl border border-[#D0C8A8] bg-[#F5F1E3] px-5 py-4">
               <p className="text-xs font-semibold text-[#1A1A0E] mb-1">How it works</p>
@@ -611,7 +679,7 @@ export default function Home() {
                 href="/benchmarks"
                 className="mt-3 inline-block text-[11px] font-semibold text-[#1C3A20] hover:underline"
               >
-                View full benchmarks
+                View full benchmarks →
               </Link>
             </div>
           </div>
