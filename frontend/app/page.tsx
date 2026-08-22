@@ -482,11 +482,11 @@ export default function Home() {
                 aria-checked={useReranker}
                 onClick={() => setUseReranker((v) => !v)}
                 disabled={phase === "recording" || phase === "submitting"}
-                className="relative h-5 w-9 rounded-full transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="relative h-5 w-9 rounded-full transition-colors disabled:opacity-40 rotate-180 disabled:cursor-not-allowed"
                 style={{ background: useReranker ? "#1C3A20" : "#D0C8A8" }}
               >
                 <span
-                  className={`absolute top-0.5 h-4 w-4 rounded-full bg-white rotate-180 shadow transition-transform ${
+                  className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${
                     useReranker ? "-translate-x-4" : "translate-x-0.5"
                   }`}
                 />
