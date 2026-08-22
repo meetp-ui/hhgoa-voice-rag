@@ -486,8 +486,8 @@ export default function Home() {
                 style={{ background: useReranker ? "#1C3A20" : "#D0C8A8" }}
               >
                 <span
-                  className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${
-                    useReranker ? "translate-x-4" : "translate-x-0.5"
+                  className={`absolute top-0.5 h-4 w-4 rounded-full bg-white rotate-180 shadow transition-transform ${
+                    useReranker ? "translate-x-4" : "-translate-x-0.5"
                   }`}
                 />
               </button>
