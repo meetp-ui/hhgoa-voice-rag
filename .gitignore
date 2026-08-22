@@ -12,10 +12,12 @@ backend/.scratch/
 node_modules/
 dist/
 
-.env
 *.env.local
 
 .DS_Store
-.vscode/
 .idea/
 logs/
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat
+config.bat
