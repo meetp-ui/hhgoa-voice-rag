@@ -321,7 +321,7 @@ export default function Home() {
           className="text-[9px] tracking-[0.3em] text-[#A8A090] uppercase"
           style={{ writingMode: "vertical-rl" }}
         >
-          250,000 Passages · Five Languages · 30 ms Budget
+          250,000 Passages · Two Languages · 30 ms Budget
         </span>
       </div>
 
@@ -487,7 +487,7 @@ export default function Home() {
               >
                 <span
                   className={`absolute top-0.5 h-4 w-4 rounded-full bg-white rotate-180 shadow transition-transform ${
-                    useReranker ? "translate-x-4" : "-translate-x-0.5"
+                    useReranker ? "-translate-x-4" : "translate-x-0.5"
                   }`}
                 />
               </button>
